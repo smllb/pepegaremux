@@ -1,0 +1,20 @@
+{
+    "base": {
+        "url": "http://localhost:",
+        "port": "8080",
+        "endpoints": {
+            "appraise": {
+                "base": "/appraise",
+                "children": {
+                    "link": "/link",
+                    "page": "/page",
+                    "playlist": "/playlist"
+                }
+            },
+            "api-key": {
+                "base": "/api-key"
+            }  
+        }
+    }
+
+}
