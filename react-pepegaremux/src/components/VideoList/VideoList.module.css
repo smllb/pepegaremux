@@ -1,0 +1,18 @@
+.virtualList {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(155, 155, 155, 0.7) transparent;
+  }
+  
+  .virtualList::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  .virtualList::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .virtualList::-webkit-scrollbar-thumb {
+    background-color: rgba(155, 155, 155, 0.7);
+    border-radius: 20px;
+    border: transparent;
+  }
