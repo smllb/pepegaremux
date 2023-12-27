@@ -1,19 +1,18 @@
 {
     "base": {
         "url": "http://localhost:",
-        "port": "8080",
+        "port": "3969",
         "endpoints": {
-            "appraise": {
-                "base": "/appraise",
+            "ytdlp": {
+                "base": "/ytdlp",
                 "children": {
-                    "link": "/link",
-                    "page": "/page",
-                    "playlist": "/playlist"
+                    "metadata": "/metadata",
+                    "appraise": "/appraise"
+                },
+                "source": {
+                    "youtube": "/youtube"
                 }
-            },
-            "api-key": {
-                "base": "/api-key"
-            }  
+            }
         }
     }
 
