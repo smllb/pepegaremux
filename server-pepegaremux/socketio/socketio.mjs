@@ -9,8 +9,41 @@ const socket = new Server(httpServer, {
 });
 const port = '3967'
 
-socket.on("connect", () => {
-  console.log("Handshake stablished between parties.")
+socket.on("connect", (client) => {
+    console.log("Handshake stablished between parties." + client.id)
+
+    let videoList = {
+        list: [],
+
+
+    }; 
+
+    client.on('video', (type) => {
+        console.log(`Received ${type} video.`)
+    });
+
+    client.on('add-list', (video) => {
+        
+        let videoMetadata = JSON.parse(video)
+        console.log(`Adding ${videoMetadata} to list in server.`)
+        if (Array.isArray(videoMetadata)) {
+            videoList.list.push(...videoMetadata)
+        } else {
+            videoList.list.push(videoMetadata);
+        }
+        client.emit('video-list-length-response', videoList.list.length)
+
+
+    })
+
+    client.on('video-list-update-request', () => {
+        console.log(`video-list-update-request`)
+        let response = videoList.list
+        console.log(`Sending entire videoList.list back to client.`)
+        client.emit('video-list-update-response', videoList.list)
+    })
+
+    
 
 });
 
@@ -19,6 +52,10 @@ socket.on('connect_error', (error) => {
 
 })
 
+
+socket.on('disconnect', () => {
+    console.log('Disconnected from server');
+  });
 httpServer.listen(port, () => { 
     console.log("httpServer/SocketIO listening to port: " + port)
 

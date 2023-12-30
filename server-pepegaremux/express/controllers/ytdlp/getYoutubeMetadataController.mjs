@@ -13,13 +13,14 @@ const getYoutubeMetadata = (url) => {
                     return;
                 }
 
-                const videos = stdout.split('\n');
+                const videos = stdout.split('\n').filter(str => str);
                 const videosMetadata = videos.map(video => {
-                    const [title, duration_string, uploader, availability, thumbnail, id] = video.split('\t');
+                    const [title, duration_string, uploader, availability, thumbnail, id] = video.split('\t').filter(str => str);
                     return { title, duration_string, uploader, availability, thumbnail, id }
         
                 })
-    
+                
+                
                 resolve(videosMetadata)
                  
                 

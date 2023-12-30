@@ -27,7 +27,7 @@ const buildPrintCommand = (url, instructions, parameters) => {
     })
 
     const printCommand = `${structure.application}\t${instructionsString}"${parametersString}"\t"${url}"`;
-    console.log(`Generated print command: ` + printCommand)
+    
     return printCommand
 }
 

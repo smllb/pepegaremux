@@ -27,9 +27,11 @@ const getYoutubeMetadata = async (url) => {
             return response.text()
         })
         .then(body => {
-            console.log(body)
-            return body
+            const data = JSON.parse(body)
+            console.log(data)
+            return JSON.stringify(data)
         })
 
 }
-export default appraiseUrl;
+
+export { appraiseUrl, getYoutubeMetadata };

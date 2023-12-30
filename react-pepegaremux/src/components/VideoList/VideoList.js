@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { ListItemButton } from '@mui/material';
@@ -11,6 +11,9 @@ import IconButton from '@mui/material/IconButton';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 import DownloadIcon from '@mui/icons-material/Download';
+import { SocketContext } from '../grid-container/GridContainer';
+import { useContext } from 'react';
+import { useState } from 'react';
 
 const deleteButtonTheme = createTheme({
   palette: {
@@ -33,31 +36,66 @@ const downloadButtonTheme = createTheme({
   }
 })
 
-function renderRow(props) {
-    const { index, style } = props;
+let renderRow = (props) => {
   
-    return (
-      <ListItem style={style} key={index} component="div" disablePadding>
-        <ListItemButton>
-          <ListItemText primary={`Item ${index + 1}`}></ListItemText>
-          <ListItemSecondaryAction>
-          <ThemeProvider theme={downloadButtonTheme}>
-              <IconButton edge="end" aria-label='Download' color="greeny">
-                <DownloadIcon/>
-              </IconButton>
-            </ThemeProvider>
-            <ThemeProvider theme={deleteButtonTheme}>
-              <IconButton edge="end" aria-label='Delete' color="ochre">
-                <DeleteIcon/>
-              </IconButton>
-            </ThemeProvider>
-          </ListItemSecondaryAction>
-        </ListItemButton>
-      </ListItem>
-    );
-}
+  const { index, style, socket, videoList} = props;
+  console.log(`Current index on renderRow: ${index}`)
+  const video = videoList[index];
+  console.log(`${JSON.stringify(videoList,2,null)}`)
+  const videoLabel = video.title ? `${video.title} (${video.duration_string}) uploaded by ${video.uploader}` : `Item ${index+1}`;
+
+  
+
+
+  return (
+    <ListItem style={style} key={index} component="div" disablePadding>
+      <ListItemButton>
+        <ListItemText primary={videoLabel}></ListItemText>
+        <ListItemSecondaryAction>
+        <ThemeProvider theme={downloadButtonTheme}>
+            <IconButton edge="end" aria-label='Download' color="greeny">
+              <DownloadIcon/>
+            </IconButton>
+          </ThemeProvider>
+          <ThemeProvider theme={deleteButtonTheme}>
+            <IconButton edge="end" aria-label='Delete' color="ochre">
+              <DeleteIcon/>
+            </IconButton>
+          </ThemeProvider>
+        </ListItemSecondaryAction>
+      </ListItemButton>
+    </ListItem>
+  );
+} 
 
 function VideoList() {
+
+  const socket = useContext(SocketContext)
+  const  [amountOfVideos, setAmountOfVideos] = useState(0);
+  const [videoList, setVideoList] = useState([]);
+
+  useEffect(() => {
+    socket.on('video-list-length-response', (videoListLength) => {
+      socket.emit('video-list-update-request')
+
+    }); 
+
+    
+    socket.on('video-list-update-response', videoList => {
+      setVideoList(videoList);
+      setAmountOfVideos(videoList.length)
+      console.log(videoList)
+
+    });
+
+    return () => {
+      socket.off('video-list-length-response');
+      socket.off('video-list-update-response');
+
+    };
+  }, [socket]);
+
+
   return (
     <AutoSizer>
       {({ height, width }) => (
@@ -66,10 +104,11 @@ function VideoList() {
           height={height}
           width={width}
           itemSize={46}
-          itemCount={20}
+          itemCount={amountOfVideos}
           overscanCount={5}
         >
-          {renderRow}
+          {props => renderRow({...props, socket, videoList})}
+
         </FixedSizeList>
       )}
     </AutoSizer>

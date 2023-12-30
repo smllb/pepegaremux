@@ -1,15 +1,15 @@
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import React, { useRef } from 'react';
-import appraiseUrlFromRequest from '../../controller/ytdlpController.mjs'
 import './InputForm.css'
 import UrlError from './UrlError/UrlError';
 import { Box } from '@mui/material';
 import { PageHeightContext } from '../grid-container/GridContainer';
 import { useContext } from 'react';
 import { SocketContext } from '../grid-container/GridContainer';
+import * as ytdlpController from '../../controller/ytdlpController.mjs';
 
-function InputDownloadForm(vwHeight) {
+function InputDownloadForm() {
 
     const pageHeightIsSmall = React.useContext(PageHeightContext)
     const inputRef = useRef();
@@ -26,13 +26,15 @@ function InputDownloadForm(vwHeight) {
 
         if (url.match(/\./g)) {
             setTextFieldValue('')
-            let urlType = await appraiseUrlFromRequest(encodeURIComponent(inputRef.current.value))
-            console.log(urlType)
-                if (urlType == 'YOUTUBE') {
-                    
-                    return
-                }
-            
+            let urlType = await ytdlpController.appraiseUrlFromRequest(encodeURIComponent(inputRef.current.value))
+            socket.emit('video', urlType)
+            if (urlType === 'YOUTUBE') {
+                ytdlpController.sendVideoMetadataToVideoList(url, socket)
+                
+                return
+            }
+            ytdlpController.sendGenericVideoToVideoList() 
+           
             return
 
         } else if (url.length === 0) {
