@@ -36,6 +36,10 @@ const downloadButtonTheme = createTheme({
   }
 })
 
+const removeVideoFromList = (videoId, socket) => {
+  socket.emit('remove-video-request', videoId)
+  
+}
 let renderRow = (props) => {
   
   const { index, style, socket, videoList} = props;
@@ -43,9 +47,6 @@ let renderRow = (props) => {
   const video = videoList[index];
   console.log(`${JSON.stringify(videoList,2,null)}`)
   const videoLabel = video.title ? `${video.title} (${video.duration_string}) uploaded by ${video.uploader}` : `Item ${index+1}`;
-
-  
-
 
   return (
     <ListItem style={style} key={index} component="div" disablePadding>
@@ -59,7 +60,7 @@ let renderRow = (props) => {
           </ThemeProvider>
           <ThemeProvider theme={deleteButtonTheme}>
             <IconButton edge="end" aria-label='Delete' color="ochre">
-              <DeleteIcon/>
+              <DeleteIcon onClick={() => removeVideoFromList(video.id, socket)}/>
             </IconButton>
           </ThemeProvider>
         </ListItemSecondaryAction>
@@ -75,7 +76,7 @@ function VideoList() {
   const [videoList, setVideoList] = useState([]);
 
   useEffect(() => {
-    socket.on('video-list-length-response', (videoListLength) => {
+    socket.on('video-list-length-response', () => {
       socket.emit('video-list-update-request')
 
     }); 

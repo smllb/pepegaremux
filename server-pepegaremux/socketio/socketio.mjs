@@ -14,8 +14,7 @@ socket.on("connect", (client) => {
 
     let videoList = {
         list: [],
-
-
+        
     }; 
 
     client.on('video', (type) => {
@@ -43,7 +42,11 @@ socket.on("connect", (client) => {
         client.emit('video-list-update-response', videoList.list)
     })
 
-    
+    client.on('remove-video-request', (videoId) => {
+      console.log(`remove-video with id ${videoId}`)  
+      videoList.list = videoList.list.filter(video => video.id !== videoId)
+      client.emit('video-list-update-response', videoList.list)
+    })
 
 });
 
