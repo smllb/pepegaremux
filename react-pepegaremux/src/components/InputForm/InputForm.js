@@ -1,5 +1,5 @@
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
 import React, { useRef } from 'react';
 import './InputForm.css'
 import UrlError from './UrlError/UrlError';
@@ -8,6 +8,9 @@ import { PageHeightContext } from '../grid-container/GridContainer';
 import { useContext } from 'react';
 import { SocketContext } from '../grid-container/GridContainer';
 import * as ytdlpController from '../../controller/ytdlpController.mjs';
+import LoadingButton from '@mui/lab/LoadingButton';
+import SendIcon from '@mui/icons-material/Send';
+
 
 function InputDownloadForm() {
 
@@ -17,27 +20,33 @@ function InputDownloadForm() {
     const [error, setError] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState('');
     const [textFieldValue, setTextFieldValue] = React.useState('');
+    const [isFetching, setisFetching] = React.useState(false)
     const socket = useContext(SocketContext);
 
-    const handleUrlSubmit = async (event) => {
+    socket.on('video-list-length-response', () => {
+        setisFetching(false)
 
+    })
+
+    const handleUrlSubmit = async (event) => {
         event.preventDefault(); 
         let url = inputRef.current.value;
+        setisFetching(true)
 
         if (url.match(/\./g)) {
             setTextFieldValue('')
             let urlType = await ytdlpController.appraiseUrlFromRequest(encodeURIComponent(inputRef.current.value))
             socket.emit('video', urlType)
+
             if (urlType === 'YOUTUBE') {
                 ytdlpController.sendVideoMetadataToVideoList(url, socket)
-                
                 return
             }
             ytdlpController.sendGenericVideoToVideoList() 
-           
             return
 
-        } else if (url.length === 0) {
+        } 
+        else if (url.length === 0) {
             console.log(url)
             setErrorMessage('Empty URL')
             
@@ -45,8 +54,10 @@ function InputDownloadForm() {
             setErrorMessage('Invalid URL')
 
         }
-        
+
+        setisFetching(false)
         setError(true)
+
         setTimeout(() => {
             setError(false)
         }, 1000)
@@ -85,7 +96,14 @@ function InputDownloadForm() {
                     style: {color: 'white'}
                 }}
             />
-            <Button type="submit" variant="contained" color="primary" sx={{margin: '0px 10px 0px 10px', height: '100%'}}>ADD TO QUEUE</Button>
+            <LoadingButton loading={isFetching} type="submit" variant="contained" color="primary" loadingPosition="end" endIcon={<SendIcon />} 
+            sx={{margin: '0px 10px 0px 10px', height: '100%', 
+            '&.Mui-disabled': {
+                backgroundColor: '#1976d2', opacity: 0.3, color: 'white'
+            }}}>
+            <span>ADD TO QUEUE</span>
+            </LoadingButton>
+            
         </form>
     )
 }
