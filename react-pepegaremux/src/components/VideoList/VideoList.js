@@ -14,6 +14,8 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { SocketContext } from '../grid-container/GridContainer';
 import { useContext } from 'react';
 import { useState } from 'react';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Avatar from '@mui/material/Avatar';
 
 const deleteButtonTheme = createTheme({
   palette: {
@@ -37,6 +39,8 @@ const downloadButtonTheme = createTheme({
 })
 
 const removeVideoFromList = (videoId, socket) => {
+  console.log("REMOVE VIDEO")
+  console.log("Socket connected:", socket.connected);
   socket.emit('remove-video-request', videoId)
   
 }
@@ -51,6 +55,9 @@ let renderRow = (props) => {
   return (
     <ListItem style={style} key={index} component="div" disablePadding>
       <ListItemButton>
+        <ListItemIcon>
+          <Avatar alt="video thumb" src={video.thumbnail}></Avatar>
+        </ListItemIcon>
         <ListItemText primary={videoLabel}></ListItemText>
         <ListItemSecondaryAction>
         <ThemeProvider theme={downloadButtonTheme}>
@@ -59,8 +66,8 @@ let renderRow = (props) => {
             </IconButton>
           </ThemeProvider>
           <ThemeProvider theme={deleteButtonTheme}>
-            <IconButton edge="end" aria-label='Delete' color="ochre">
-              <DeleteIcon onClick={() => removeVideoFromList(video.id, socket)}/>
+            <IconButton edge="end" aria-label='Delete' color="ochre" onClick={() => removeVideoFromList(video.id, socket)}>
+              <DeleteIcon/>
             </IconButton>
           </ThemeProvider>
         </ListItemSecondaryAction>
