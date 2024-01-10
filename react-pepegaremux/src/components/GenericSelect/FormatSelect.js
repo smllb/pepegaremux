@@ -5,16 +5,25 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
+import { useContext } from 'react';
+import { SocketContext } from '../grid-container/GridContainer';
 
 const FormatSelect = () => {
 
     const matches = useMediaQuery('(max-height:600px')
     const [format, setFormat] = React.useState('mp3'); 
     const label = 'Video format';
+    const socket = React.useContext(SocketContext)
+
+    const updateSelectedFileType = (filetype) => {
+        socket.emit('update-filetype-request', filetype);
+    }
 
     const handleChange = (event) => {
-        setFormat(event.target.value);
+        let filetype = event.target.value
+        setFormat(filetype);
+        updateSelectedFileType(filetype)
+
     }
 
     return <Box sx={{ minWidth: 70, }}>

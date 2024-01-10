@@ -10,6 +10,7 @@ import io from 'socket.io-client';
 
 export const PageHeightContext = React.createContext()
 export const SocketContext = React.createContext();
+
 const socket = io('http://localhost:3967');
 
 function GridContainer() {

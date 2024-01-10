@@ -7,7 +7,8 @@
                 "base": "/ytdlp",
                 "children": {
                     "metadata": "/metadata",
-                    "appraise": "/appraise"
+                    "appraise": "/appraise",
+                    "download": "/download"
                 },
                 "source": {
                     "youtube": "/youtube"

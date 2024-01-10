@@ -39,34 +39,37 @@ const downloadButtonTheme = createTheme({
 })
 
 const removeVideoFromList = (videoId, socket) => {
-  console.log("REMOVE VIDEO")
-  console.log("Socket connected:", socket.connected);
   socket.emit('remove-video-request', videoId)
   
 }
+
+const downloadVideoFromList = (videoIndex, videoId, socket) => {
+  socket.emit('download-single-video-request', {videoIndex: videoIndex, videoId: videoId, socketId: socket.id})
+
+}
+
 let renderRow = (props) => {
   
   const { index, style, socket, videoList} = props;
-  console.log(`Current index on renderRow: ${index}`)
   const video = videoList[index];
-  console.log(`${JSON.stringify(videoList,2,null)}`)
-  const videoLabel = video.title ? `${video.title} (${video.duration_string}) uploaded by ${video.uploader}` : `Item ${index+1}`;
 
+  const videoLabel = video.title ? `${video.title} (${video.duration_string}) uploaded by ${video.uploader}` : `Item ${index+1}`;
+  let videoStatus = video.status;
   return (
     <ListItem style={style} key={index} component="div" disablePadding>
       <ListItemButton>
         <ListItemIcon>
           <Avatar alt="video thumb" src={video.thumbnail}></Avatar>
         </ListItemIcon>
-        <ListItemText primary={videoLabel}></ListItemText>
+        <ListItemText primary={videoLabel} secondary={videoStatus} sx ={{ '& .MuiListItemText-secondary': {color: 'green'}}}></ListItemText>
         <ListItemSecondaryAction>
         <ThemeProvider theme={downloadButtonTheme}>
-            <IconButton edge="end" aria-label='Download' color="greeny">
+            <IconButton edge="end" aria-label='Download' color="greeny" onClick={() => downloadVideoFromList(index, video.id, socket)}>
               <DownloadIcon/>
             </IconButton>
           </ThemeProvider>
           <ThemeProvider theme={deleteButtonTheme}>
-            <IconButton edge="end" aria-label='Delete' color="ochre" onClick={() => removeVideoFromList(video.id, socket)}>
+            <IconButton edge="end" aria-label='Delete' color="ochre" onClick={() => removeVideoFromList(index, socket)}>
               <DeleteIcon/>
             </IconButton>
           </ThemeProvider>
@@ -92,7 +95,7 @@ function VideoList() {
     socket.on('video-list-update-response', videoList => {
       setVideoList(videoList);
       setAmountOfVideos(videoList.length)
-      console.log(videoList)
+      //console.log(videoList)
 
     });
 
