@@ -28,7 +28,7 @@ const getYoutubeMetadata = async (url) => {
         })
         .then(body => {
             const data = JSON.parse(body)
-            console.log(data)
+            //console.log(data)
             return JSON.stringify(data)
         })
 
