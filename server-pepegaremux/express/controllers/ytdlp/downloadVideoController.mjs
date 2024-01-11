@@ -9,13 +9,13 @@ const downloadVideo = async (id) => {
     console.log(`downloadVideo filetype: ${filetype}`)
     switch (filetype) {
         case 'mp4':
-        downloadCommand = `yt-dlp -o "${outputPath}/%(title)s.%(ext)s" -S ext ${id}`
+        downloadCommand = `yt-dlp -o "${outputPath}/%(title)s.%(ext)s" -S ext "${id}"`
         break;
         case 'webm':
-        downloadCommand = `yt-dlp -o "${outputPath}/%(title)s.%(ext)s" ${id}`
+        downloadCommand = `yt-dlp -o "${outputPath}/%(title)s.%(ext)s" "${id}"`
         break;
         default: 
-        downloadCommand = `yt-dlp -o "${outputPath}/%(title)s.%(ext)s" -x --audio-format ${filetype} --audio-quality 0 ${id}`
+        downloadCommand = `yt-dlp -o "${outputPath}/%(title)s.%(ext)s" -x --audio-format ${filetype} --audio-quality 0 "${id}"`
 
     }
 

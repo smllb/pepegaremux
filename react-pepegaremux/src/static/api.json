@@ -11,7 +11,8 @@
                     "download": "/download"
                 },
                 "source": {
-                    "youtube": "/youtube"
+                    "youtube": "/youtube",
+                    "generic": "/generic"
                 }
             }
         }

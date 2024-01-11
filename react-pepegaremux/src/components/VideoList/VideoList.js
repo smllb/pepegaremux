@@ -16,6 +16,9 @@ import { useContext } from 'react';
 import { useState } from 'react';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Avatar from '@mui/material/Avatar';
+import CircularProgress from '@mui/material/CircularProgress';
+import DoneIcon from '@mui/icons-material/Done';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 const deleteButtonTheme = createTheme({
   palette: {
@@ -43,7 +46,7 @@ const removeVideoFromList = (videoId, socket) => {
   
 }
 
-const downloadVideoFromList = (videoIndex, videoId, socket) => {
+const downloadVideoFromList = (videoIndex, videoId, socket, videoUrl) => {
   socket.emit('download-single-video-request', {videoIndex: videoIndex, videoId: videoId, socketId: socket.id})
 
 }
@@ -55,22 +58,38 @@ let renderRow = (props) => {
 
   const videoLabel = video.title ? `${video.title} (${video.duration_string}) uploaded by ${video.uploader}` : `Item ${index+1}`;
   let videoStatus = video.status;
+  let successfulStatus = ['Ready to Download', 'Downloading...', 'Downloaded']
+  let secondaryTextColor = successfulStatus.includes(videoStatus) ? '#5c8e37' : 'red';
+
   return (
     <ListItem style={style} key={index} component="div" disablePadding>
       <ListItemButton>
         <ListItemIcon>
           <Avatar alt="video thumb" src={video.thumbnail}></Avatar>
         </ListItemIcon>
-        <ListItemText primary={videoLabel} secondary={videoStatus} sx ={{ '& .MuiListItemText-secondary': {color: 'green'}}}></ListItemText>
+        <ListItemText primary={videoLabel} secondary={videoStatus} sx ={{ '& .MuiListItemText-secondary': {color: secondaryTextColor}}}></ListItemText>
         <ListItemSecondaryAction>
         <ThemeProvider theme={downloadButtonTheme}>
-            <IconButton edge="end" aria-label='Download' color="greeny" onClick={() => downloadVideoFromList(index, video.id, socket)}>
-              <DownloadIcon/>
+            <IconButton edge="end" aria-label='Download' sx={{color:secondaryTextColor}} >
+              {(() => {
+                if (videoStatus == 'Ready to Download') {
+                  return <DownloadIcon onClick={() => downloadVideoFromList(index, video.url, socket)}/>
+
+                } else if (videoStatus == 'Downloading...') {
+                  return<CircularProgress size={16}/>
+
+                } else if (videoStatus == 'Downloaded'){
+                  return <DoneIcon/>
+
+                } else {
+                  return <ErrorOutlineIcon/>
+                }
+              })()}
             </IconButton>
           </ThemeProvider>
           <ThemeProvider theme={deleteButtonTheme}>
             <IconButton edge="end" aria-label='Delete' color="ochre" onClick={() => removeVideoFromList(index, socket)}>
-              <DeleteIcon/>
+              <DeleteIcon/>         
             </IconButton>
           </ThemeProvider>
         </ListItemSecondaryAction>
@@ -114,7 +133,7 @@ function VideoList() {
           className={styles.virtualList} 
           height={height}
           width={width}
-          itemSize={46}
+          itemSize={90}
           itemCount={amountOfVideos}
           overscanCount={5}
         >

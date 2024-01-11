@@ -34,4 +34,19 @@ const getYoutubeMetadata = async (url) => {
 
 }
 
-export { appraiseUrl, getYoutubeMetadata };
+const getGenericMetadata = async (url) => {
+    console.log('inside getGenericMetadata')
+    const GENERIC_METADATA_URL = `${BASE_URL}${ytdlp.base}${ytdlp.children.metadata}${ytdlp.source.generic}/${encodeURIComponent(url)}`
+
+    return await fetch(GENERIC_METADATA_URL, { method: 'GET'})
+        .then(response => {
+            return response.text()
+        })
+        .then(body => {
+            const data = JSON.parse(body)
+            return JSON.stringify(data)
+        })
+
+}
+
+export { appraiseUrl, getYoutubeMetadata, getGenericMetadata };

@@ -42,7 +42,7 @@ function InputDownloadForm() {
                 ytdlpController.sendVideoMetadataToVideoList(url, socket)
                 return
             }
-            ytdlpController.sendGenericVideoToVideoList() 
+            ytdlpController.sendGenericVideoToVideoList(url, socket) 
             return
 
         } 

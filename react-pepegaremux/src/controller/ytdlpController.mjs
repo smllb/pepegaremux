@@ -17,11 +17,15 @@ const sendVideoMetadataToVideoList = async (url, socket) => {
     //console.log(`Sent youtube entity with url ${url} to server.`)
 
 };
-
+const getGenericMetadataFromUrl = async (url) => {
+    console.log('inside getGenericMetadataFromUrl')
+    return await ytdlpRepository.getGenericMetadata(url)
+}
 const sendGenericVideoToVideoList = async (url, socket) => {
-    socket.emit('add-list', {id: url})
-    //console.log(`Sent generic video with url ${url} to server.`)
+    let genericVideoMetadata = await ytdlpRepository.getGenericMetadata(url)
+    socket.emit('add-list', genericVideoMetadata)
+
 
 }
-export { appraiseUrlFromRequest, getYoutubeMetadataFromUrl, sendVideoMetadataToVideoList, sendGenericVideoToVideoList };
+export { appraiseUrlFromRequest, getYoutubeMetadataFromUrl, sendVideoMetadataToVideoList, sendGenericVideoToVideoList, getGenericMetadataFromUrl };
 
