@@ -1,8 +1,15 @@
 import { Server } from "socket.io";
 import { createServer } from 'http';
-import fs from 'fs'
+import fs from 'fs';
+import path from 'node:path';
 
-const httpServer = createServer()
+const httpServer = createServer((req, res) => {
+    if (req.url === "/") {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/plain');
+        res.end('Sent status back to client.!\n');
+    }
+})
 const socket = new Server(httpServer, {
     cors: {
         origin: "*"
@@ -10,12 +17,26 @@ const socket = new Server(httpServer, {
 });
 
 const writeFileTypeIntoSettings = (filetype) => {
-    console.log("Writing filetype into settings: " + filetype)
     let settingsPath = '../settings.json'
-    let settings = JSON.parse(fs.readFileSync(settingsPath))
-    settings.filetype = filetype;
-    let updatedSettings = JSON.stringify(settings, null, 2)
-    fs.writeFileSync(settingsPath, updatedSettings, 'utf8')
+
+    if (fs.readFileSync(settingsPath)) {
+        console.log("Writing filetype into settings: " + filetype)
+        let settings = JSON.parse(fs.readFileSync(settingsPath))
+        settings.filetype = filetype;
+        let updatedSettings = JSON.stringify(settings, null, 2)
+        fs.writeFileSync(settingsPath, updatedSettings, 'utf8')
+
+    } else {
+
+        let defaultSettings = {
+            filetype: "mp3",
+            outputPath: path.join(os.homedir(), 'Music', 'PepegaRemux')
+        }
+        
+        fs.writeFileSync(settingsPath, JSON.stringify(defaultSettings, null, 2))
+
+    }
+
 }
 
 const port = '3967'
@@ -111,3 +132,4 @@ httpServer.listen(port, () => {
     console.log("httpServer/SocketIO listening to port: " + port)
 
 });
+
