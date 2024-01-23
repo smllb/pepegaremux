@@ -2,7 +2,7 @@ import buildPrintCommand from "./buildPrintCommandController.mjs"
 import  { exec } from 'child_process' 
 const getYoutubeMetadata = (url) => {
 
-    const printCommand = buildPrintCommand(url, ['--print'], ['title', 'duration_string', 'uploader', 'availability', 'thumbnail', 'id'])
+    const printCommand = buildPrintCommand(url, ['--encoding utf8 --print'], ['title', 'duration_string', 'uploader', 'availability', 'thumbnail', 'id'])
     
     let metadata = new Promise ((resolve, reject) => {
         const status = 'Ready to Download'
