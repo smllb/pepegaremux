@@ -23,9 +23,9 @@ const getGenericMetadataFromUrl = async (url) => {
     console.log('inside getGenericMetadataFromUrl')
     return await ytdlpRepository.getGenericMetadata(url)
 }
-const sendGenericVideoToVideoList = async (url, socket) => {
+const sendGenericVideoToVideoList = async (url, socket, urlType) => {
     let genericVideoMetadata = await ytdlpRepository.getGenericMetadata(url)
-    socket.emit('add-list', genericVideoMetadata)
+    socket.emit('add-list', { metadata: genericVideoMetadata, urlType: urlType })
 
 
 }
