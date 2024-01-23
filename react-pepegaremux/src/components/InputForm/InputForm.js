@@ -39,10 +39,10 @@ function InputDownloadForm() {
             socket.emit('video', urlType)
 
             if (urlType === 'YOUTUBE') {
-                ytdlpController.sendVideoMetadataToVideoList(url, socket)
+                ytdlpController.sendVideoMetadataToVideoList(url, socket, urlType)
                 return
             }
-            ytdlpController.sendGenericVideoToVideoList(url, socket) 
+            ytdlpController.sendGenericVideoToVideoList(url, socket, urlType) 
             return
 
         } 
