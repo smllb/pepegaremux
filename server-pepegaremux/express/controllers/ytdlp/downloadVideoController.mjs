@@ -2,20 +2,20 @@ import  { exec } from 'child_process'
 import settings from '../../../../settings.json' assert { type: 'json'}
 import readFromSettings from './readFromSettingsController.mjs';
 
-const downloadVideo = async (id) => {
+const downloadVideo = async (videoId) => {
     let downloadCommand = '';
     let filetype = await readFromSettings('filetype')
     let outputPath = await readFromSettings('outputPath')
     console.log(`downloadVideo filetype: ${filetype}`)
     switch (filetype) {
         case 'mp4':
-        downloadCommand = `yt-dlp -o "${outputPath}/%(title)s.%(ext)s" -S ext "${id}"`
+        downloadCommand = `yt-dlp -o "${outputPath}/%(title)s.%(ext)s" -S ext "${videoId}"`
         break;
         case 'webm':
-        downloadCommand = `yt-dlp -o "${outputPath}/%(title)s.%(ext)s" "${id}"`
+        downloadCommand = `yt-dlp -o "${outputPath}/%(title)s.%(ext)s" "${videoId}"`
         break;
         default: 
-        downloadCommand = `yt-dlp -o "${outputPath}/%(title)s.%(ext)s" -x --audio-format ${filetype} --audio-quality 0 "${id}"`
+        downloadCommand = `yt-dlp -o "${outputPath}/%(title)s.%(ext)s" -x --audio-format ${filetype} --audio-quality 0 "${videoId}"`
 
     }
 
@@ -35,7 +35,8 @@ const downloadVideo = async (id) => {
 
             })
         } catch (err) {
-    
+            console.error(err)
+            resolve("Error on download.")
         }
     })
 
