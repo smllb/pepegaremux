@@ -46,8 +46,8 @@ const removeVideoFromList = (videoId, socket) => {
   
 }
 
-const downloadVideoFromList = (videoIndex, videoId, socket, videoUrl) => {
-  socket.emit('download-single-video-request', {videoIndex: videoIndex, videoId: videoId, socketId: socket.id})
+const downloadVideoFromList = (videoIndex, videoId, socket, downloadPointer) => {
+  socket.emit('download-single-video-request', {videoIndex: videoIndex, videoId: videoId, socketId: socket.id, downloadPointer: downloadPointer})
 
 }
 
@@ -72,13 +72,21 @@ let renderRow = (props) => {
         <ThemeProvider theme={downloadButtonTheme}>
             <IconButton edge="end" aria-label='Download' sx={{color:secondaryTextColor}} >
               {(() => {
-                if (videoStatus == 'Ready to Download') {
-                  return <DownloadIcon onClick={() => downloadVideoFromList(index, video.url, socket)}/>
+                if (videoStatus === 'Ready to Download') {
+                  let downloadPointer = '';
+                  if (video.type === 'YOUTUBE') {
+                    downloadPointer = video.id;
+                   
+                  } else {
+                    downloadPointer = video.url;
 
-                } else if (videoStatus == 'Downloading...') {
+                  }
+                  return <DownloadIcon onClick={() => downloadVideoFromList(index, video.id, socket, downloadPointer)}/>
+
+                } else if (videoStatus === 'Downloading...') {
                   return<CircularProgress size={16}/>
 
-                } else if (videoStatus == 'Downloaded'){
+                } else if (videoStatus === 'Downloaded'){
                   return <DoneIcon/>
 
                 } else {
