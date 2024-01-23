@@ -1,8 +1,11 @@
 const fs = require("fs");
+const os = require("os")
+const path = require("path")
+
 const writeFileTypeIntoSettings = (filetype) => {
     let settingsPath = './settings.json'
 
-    if (fs.readFileSync(settingsPath)) {
+    if (fs.existsSync(settingsPath)) {
         console.log("Writing filetype into settings: " + filetype)
         let settings = JSON.parse(fs.readFileSync(settingsPath))
         settings.filetype = filetype;
