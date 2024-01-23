@@ -6,6 +6,10 @@ I was tired of using browser-sourced downloaders and making my own is a good way
 
 PepegaRemux is supposed to be user friendly and it's mainly consuming yt-dlp so far. Probably working with all supported yt-dlp sites, but i didn't tested all.
 
+
+![PepegaRemux GUI](https://s13.gifyu.com/images/S0DjR.gif)
+
+
 ## Features
 
 - Download videos and musics from the web
