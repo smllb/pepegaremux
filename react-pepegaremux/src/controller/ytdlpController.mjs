@@ -10,10 +10,12 @@ const getYoutubeMetadataFromUrl = async (url) => {
 
 }
 
-const sendVideoMetadataToVideoList = async (url, socket) => {
+const sendVideoMetadataToVideoList = async (url, socket, urlType) => {
+    console.log("inside sendVideoMetadataToVideoList " + url )
     let metadata = await ytdlpRepository.getYoutubeMetadata(url)
+    console.log(metadata)
     //console.log(`Received metadata ${metadata}`)
-    socket.emit('add-list', metadata)
+    socket.emit('add-list', {metadata: metadata, urlType: urlType})
     //console.log(`Sent youtube entity with url ${url} to server.`)
 
 };
