@@ -33,7 +33,7 @@ function InputDownloadForm() {
         let url = inputRef.current.value;
         setisFetching(true)
 
-        if (url.match(/\./g)) {
+        if (url.match(/(?!\.)(.+)\.(?!\.)(.+)/g)) {
             setTextFieldValue('')
             let urlType = await ytdlpController.appraiseUrlFromRequest(encodeURIComponent(inputRef.current.value))
             socket.emit('video', urlType)
