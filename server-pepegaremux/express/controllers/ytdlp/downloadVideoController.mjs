@@ -1,5 +1,4 @@
 import  { exec } from 'child_process' 
-import settings from '../../../../settings.json' assert { type: 'json'}
 import readFromSettings from './readFromSettingsController.mjs';
 
 const downloadVideo = async (videoId) => {

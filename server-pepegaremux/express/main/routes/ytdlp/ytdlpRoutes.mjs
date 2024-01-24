@@ -3,7 +3,6 @@ import appraiseUrl from "../../../controllers/ytdlp/appraiseUrlController.mjs";
 import getYoutubeMetadata from "../../../controllers/ytdlp/getYoutubeMetadataController.mjs";
 import downloadVideo from "../../../controllers/ytdlp/downloadVideoController.mjs";
 import io from 'socket.io-client';
-import settings from '../../../../../settings.json' assert { type: 'json'}
 
 const socket = io('http://localhost:3967');
 
