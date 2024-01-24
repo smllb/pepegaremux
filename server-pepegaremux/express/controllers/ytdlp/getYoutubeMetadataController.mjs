@@ -13,7 +13,7 @@ const getYoutubeMetadata = (url) => {
                     console.error(`exec stderr: ${stderr}`)
                     let stderrOutput = stderr.split('\n');
                     console.error(`exec error: ${error}`)
-                    resolve( {title: "Error on URL", status: stderrOutput, url: url })
+                    resolve( [{title: "Error on URL", status: stderrOutput, url: url }])
                     
                 }
 

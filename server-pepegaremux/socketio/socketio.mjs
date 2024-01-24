@@ -35,7 +35,8 @@ socket.on("connect", (client) => {
     client.on('add-list', (event) => {
         console.log(`event.metadata${event.metadata}`)
         let videoMetadata = JSON.parse(event.metadata)
-        console.log(`videoMetadata ${JSON.stringify(videoMetadata)} | typeof ${typeof(videoMetadata)}`)
+        // console.log(`event.metadata typeof> ${typeof(event.metadata)}videoMetadata: ${JSON.stringify(videoMetadata)} | typeof ${typeof (videoMetadata)}`)
+        
         videoMetadata.forEach(video => video.type = event.urlType)
         console.log(`Adding ${videoMetadata} to list in server.`)
 
