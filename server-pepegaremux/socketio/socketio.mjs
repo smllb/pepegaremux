@@ -22,7 +22,7 @@ let videoList = {
 }; 
 
 // wrap this into a function in another file 
-let poolSize = 2; // will be volatile later 
+let poolSize = 6; // will be volatile later 
 let workerFilePath = '../server-pepegaremux/express/controllers/workers/workerController.mjs'
 let pool = new WorkerPoolController.WorkerPool(poolSize, workerFilePath)
 
