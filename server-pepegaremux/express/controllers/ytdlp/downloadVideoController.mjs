@@ -28,7 +28,6 @@ const downloadVideo = async (videoId) => {
                     return;
 
                 }
-            //console.log('finished ' + stdout)
 
             resolve('Downloaded')
 

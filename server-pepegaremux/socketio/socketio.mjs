@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import { createServer } from 'http';
 import { writeFileTypeIntoSettings } from '../../utils/writeFileTypeIntoSettings.js';
+import WorkerPoolController  from '../express/controllers/workers/workersPoolController.mjs'
 
 const httpServer = createServer((req, res) => {
     if (req.url === "/") {
@@ -15,17 +16,37 @@ const socket = new Server(httpServer, {
     }
 });
 
+let videoList = {
+    list: [],
+    
+}; 
 
+// wrap this into a function in another file 
+let poolSize = 2; // will be volatile later 
+let workerFilePath = '../server-pepegaremux/express/controllers/workers/workerController.mjs'
+let pool = new WorkerPoolController.WorkerPool(poolSize, workerFilePath)
 
+let queue = new WorkerPoolController.TasksQueue(pool)
+queue.pool = pool;
+
+// write ports dynamically later to avoid conflict
 const port = '3967'
 
 socket.on("connect", (client) => {
-    
+
+    let reactSocketId;
+    queue.targetId = reactSocketId;
     console.log("Handshake stablished between parties." + client.id)
-    let videoList = {
-        list: [],
-        
-    }; 
+
+    client.on('i-am-react', () => {
+        reactSocketId = client.id;
+        client.join('react')
+        console.log(`[SocketIO-${client.id}] React socket id ${client.id}`)
+        console.log(client.rooms)
+
+
+
+    })
 
     client.on('video', (type) => {
         console.log(`Received ${type} video.`)
@@ -35,10 +56,9 @@ socket.on("connect", (client) => {
     client.on('add-list', (event) => {
         console.log(`event.metadata${event.metadata}`)
         let videoMetadata = JSON.parse(event.metadata)
-        // console.log(`event.metadata typeof> ${typeof(event.metadata)}videoMetadata: ${JSON.stringify(videoMetadata)} | typeof ${typeof (videoMetadata)}`)
         
         videoMetadata.forEach(video => video.type = event.urlType)
-        console.log(`Adding ${videoMetadata} to list in server.`)
+        //console.log(`[SocketIO-${client.id}]Adding ${videoMetadata} to list in server.`)
 
         if (Array.isArray(videoMetadata)) {
             videoList.list.push(...videoMetadata)
@@ -72,18 +92,47 @@ socket.on("connect", (client) => {
     })
 
     client.on('disconnect', () => {
+
+        if (client.id === reactSocketId) {
+            videoList.list = [];
+            
+        }
         console.log('Disconnected from server');
         
     })
+    client.on('log-list', () => {
+        console.log(videoList.list)
+    })
+
+    client.on('download-all-videos-request', async ()=> {
+        let filteredList = videoList.list.filter(videoMetadata => videoMetadata.status === 'Ready to Download')
+        queue.batch = filteredList;
+        await queue.sendAllTasksToPool();
+
+    });
+
+    client.on ('update-video-status', (event) => {
+        let id = event.metadata.id;
+        let status = event.metadata.status;
+        //console.log(`[SocketIO-${client.id}] update-video-status with id ${id}`)   
+        let index = videoList.list.findIndex(video => id === video.id)
+
+        if (index !== -1) {
+
+            videoList.list[index].status = status;
+            client.to('react').emit('video-list-update-response', videoList.list)
+        } else {
+            console.log(`[SocketIO-${client.id}] No video found with id ${id} at ${JSON.stringify(videoList.list,null,2)}`);
+        }
+
+    });
 
     client.on('download-single-video-request', (event) => {   
-        console.log(`download-single-video-request ${JSON.stringify(event, 2, null)}`)    
+        console.log(`[SocketIO-${client.id}] download-single-video-request.`)    
         const BASE_DOWNLOAD_URL = 'http://localhost:3969/ytdlp/download/single'
-        console.log("downloadPointer " + event.downloadPointer)
         let downloadUrl = (`${BASE_DOWNLOAD_URL}/${encodeURIComponent(event.downloadPointer)}/${event.socketId}`)
-        console.log("downloadUrl " + downloadUrl)
-        let index = videoList.list.findIndex(video => event.videoId === video.id)
-        console.log(videoList.list[index].type)
+        console.log("[SocketIO] downloadUrl " + downloadUrl)
+        let index = videoList.list.findIndex(video => event.videoId === video.id);
         videoList.list[index].status = 'Downloading...';
         client.emit('video-list-update-response', videoList.list)
 

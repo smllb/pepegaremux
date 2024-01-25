@@ -12,6 +12,7 @@ export const PageHeightContext = React.createContext()
 export const SocketContext = React.createContext();
 
 const socket = io('http://localhost:3967');
+socket.emit('i-am-react')
 
 function GridContainer() {
   let pageHeightIsSmall = useMediaQuery('(max-height:550px)')

@@ -19,6 +19,7 @@ import Avatar from '@mui/material/Avatar';
 import CircularProgress from '@mui/material/CircularProgress';
 import DoneIcon from '@mui/icons-material/Done';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import DoNotTouchIcon from '@mui/icons-material/DoNotTouch';
 
 const deleteButtonTheme = createTheme({
   palette: {
@@ -46,8 +47,8 @@ const removeVideoFromList = (videoId, socket) => {
   
 }
 
-const downloadVideoFromList = (videoIndex, videoId, socket, downloadPointer) => {
-  socket.emit('download-single-video-request', {videoIndex: videoIndex, videoId: videoId, socketId: socket.id, downloadPointer: downloadPointer})
+const downloadVideoFromList = (videoId, socket, downloadPointer) => {
+  socket.emit('download-single-video-request', {videoId: videoId, socketId: socket.id, downloadPointer: downloadPointer})
 
 }
 
@@ -81,7 +82,7 @@ let renderRow = (props) => {
                     downloadPointer = video.url;
 
                   }
-                  return <DownloadIcon onClick={() => downloadVideoFromList(index, video.id, socket, downloadPointer)}/>
+                  return <DownloadIcon onClick={() => downloadVideoFromList(video.id, socket, downloadPointer)}/>
 
                 } else if (videoStatus === 'Downloading...') {
                   return<CircularProgress size={16}/>
@@ -96,8 +97,15 @@ let renderRow = (props) => {
             </IconButton>
           </ThemeProvider>
           <ThemeProvider theme={deleteButtonTheme}>
-            <IconButton edge="end" aria-label='Delete' color="ochre" onClick={() => removeVideoFromList(index, socket)}>
-              <DeleteIcon/>         
+            <IconButton edge="end" aria-label='Delete' color="ochre" >
+            {(()=> {
+              if (videoStatus === 'Downloading...') {
+                return <DoNotTouchIcon style={{ pointerEvents: 'none'}}/>
+              } else {
+                return <DeleteIcon onClick={() => removeVideoFromList(index, socket)}/>
+              }
+            })()}
+                       
             </IconButton>
           </ThemeProvider>
         </ListItemSecondaryAction>
