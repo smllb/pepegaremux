@@ -2,8 +2,11 @@ const fs = require("fs");
 const os = require("os")
 const path = require("path")
 
-const writeFileTypeIntoSettings = (filetype) => {
-    let settingsPath = './settings.json'
+const writeFileTypeIntoSettings = (filetype, settingsPath) => {
+    if (!settingsPath) {
+        settingsPath = './settings.json'
+    } 
+    
 
     if (fs.existsSync(settingsPath)) {
         console.log("Writing filetype into settings: " + filetype)
@@ -24,6 +27,7 @@ const writeFileTypeIntoSettings = (filetype) => {
     }
 
 }
+
 
 module.exports =  {
     writeFileTypeIntoSettings

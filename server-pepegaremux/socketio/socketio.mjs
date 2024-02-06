@@ -87,7 +87,7 @@ socket.on("connect", (client) => {
     })
 
     client.on('update-filetype-request', (filetype) => {
-        writeFileTypeIntoSettings(filetype)
+        writeFileTypeIntoSettings(filetype, '../settings.json')
 
     })
 
