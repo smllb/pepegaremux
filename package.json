@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "electron ."
+    "start": "concurrently --kill-others \"npm --prefix ./react-pepegaremux/ start\" \"electron .\" \"npm --prefix ./server-pepegaremux/ start\""
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "concurrently": "^8.2.2",
     "electron": "^27.1.3"
   }
 }

@@ -26,7 +26,7 @@ const createWindow = () => {
         sandbox: true
       }
     })
-    win.loadFile('index.html')
+    win.loadURL(`file://${path.join(__dirname, 'index.html')}`);
     return win
   }
 
@@ -73,7 +73,12 @@ const createWindow = () => {
 
   })
 
+app.on('window-all-closed', () => {
+  console.log('All windows have been closed')
+  app.quit()
+})
 
+ipcMain.on
 
 ipcMain.on('select-output-folder', async (event) => {
   console.log("Selecting folder path.")

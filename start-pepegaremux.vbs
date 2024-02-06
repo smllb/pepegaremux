@@ -1,0 +1,1 @@
+CreateObject("WScript.Shell").Run "cmd /c npm start", 0, True
